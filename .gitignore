@@ -1,0 +1,17 @@
+# Create .gitignore for Rust
+echo "# Generated files
+/target/
+debug/
+**/*.rs.bk
+*.pdb
+*.db
+*.temp
+*.log
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+" > .gitignore
+dir.txt

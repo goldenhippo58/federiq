@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testdb
+    volumes:
+      - ./db/postgres.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./db/mysql.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_db
+    ports:
+      - "27019:27017"
+    volumes:
+      - ./db/mongo_data.json:/docker-entrypoint-initdb.d/mongo_data.json
+      - ./init-scripts/mongo-init.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+    environment:
+      MONGO_INITDB_DATABASE: testdb  # Optional: Set the default database to 'testdb'
+
+  redis:
+    image: redis:latest
+    container_name: redis_db
+    ports:
+      - "6379:6379"
+
+  rust-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: federiq_app
+    depends_on:
+      - postgres
+      - mysql
+      - mongodb
+      - redis
+    ports:
+      - "3000:3000"
+    environment:
+      POSTGRES_URL: postgres://user:password@postgres_db:5432/testdb
+      MYSQL_URL: mysql://user:password@mysql_db:3306/testdb
+      MONGO_URL: mongodb://mongodb_db:27017
+      REDIS_URL: redis://redis_db:6379
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  mysql_data:

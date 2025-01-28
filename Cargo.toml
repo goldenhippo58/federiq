@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "src/federated_query_engine",
+    "src/data_mesh",
+    "src/hybrid_data_fabric",
+    "src/ai_orchestration",
+    "src/storage",
+    "src/analytics",
+]
